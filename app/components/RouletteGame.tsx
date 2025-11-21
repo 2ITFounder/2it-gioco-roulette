@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState , useEffect, useRef } from "react";
 import type { Chamber, LogEntry } from "../types/game";
 import { generateChambers } from "../lib/gameLogic";
 
@@ -32,9 +32,26 @@ export default function RouletteGame() {
   // piccola animazione pistola
   const [isFiring, setIsFiring] = useState(false);
 
+  const shotAudioRef = useRef<HTMLAudioElement | null>(null);
+
+    useEffect(() => {
+        if (typeof Audio !== "undefined") {
+        shotAudioRef.current = new Audio("/shot.mp3");
+    }
+    }, []);
+
+
+
   const triggerGunAnimation = () => {
     setIsFiring(true);
     setTimeout(() => setIsFiring(false), 180);
+    const audio = shotAudioRef.current;
+    if (audio) {
+        try {
+            audio.currentTime = 0;
+            audio.play().catch(() => {});
+         } catch {}
+        }
   };
 
   const resetGameState = () => {
